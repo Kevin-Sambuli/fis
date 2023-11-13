@@ -30,7 +30,7 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet-search.js"></script>
-        <script src="data/firms_1.js"></script>
+        <script src="data/firms_2.js"></script>
         <script>
         var highlightLayer;
         function highlightFeature(e) {
@@ -50,13 +50,16 @@
         }
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[-1.3382147116282126,36.83244318406393],[-1.2904108877176232,36.916269474806555]]);
+        })
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
         }
         map.createPane('pane_OSMStandard_0');
         map.getPane('pane_OSMStandard_0').style.zIndex = 400;
@@ -71,7 +74,19 @@
         });
         layer_OSMStandard_0;
         map.addLayer(layer_OSMStandard_0);
-        function pop_firms_1(feature, layer) {
+        map.createPane('pane_GoogleHybrid_1');
+        map.getPane('pane_GoogleHybrid_1').style.zIndex = 401;
+        var layer_GoogleHybrid_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleHybrid_1',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleHybrid_1;
+        function pop_firms_2(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (i in e.target._eventParents) {
@@ -98,9 +113,9 @@
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_firms_1_0() {
+        function style_firms_2_0() {
             return {
-                pane: 'pane_firms_1',
+                pane: 'pane_firms_2',
                 radius: 6.8,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -114,34 +129,34 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_firms_1');
-        map.getPane('pane_firms_1').style.zIndex = 401;
-        map.getPane('pane_firms_1').style['mix-blend-mode'] = 'normal';
-        var layer_firms_1 = new L.geoJson(json_firms_1, {
+        map.createPane('pane_firms_2');
+        map.getPane('pane_firms_2').style.zIndex = 402;
+        map.getPane('pane_firms_2').style['mix-blend-mode'] = 'normal';
+        var layer_firms_2 = new L.geoJson(json_firms_2, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_firms_1',
-            layerName: 'layer_firms_1',
-            pane: 'pane_firms_1',
-            onEachFeature: pop_firms_1,
+            dataVar: 'json_firms_2',
+            layerName: 'layer_firms_2',
+            pane: 'pane_firms_2',
+            onEachFeature: pop_firms_2,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_firms_1_0(feature));
+                return L.circleMarker(latlng, style_firms_2_0(feature));
             },
         });
-        bounds_group.addLayer(layer_firms_1);
-        map.addLayer(layer_firms_1);
+        bounds_group.addLayer(layer_firms_2);
+        map.addLayer(layer_firms_2);
         setBounds();
         var i = 0;
-        layer_firms_1.eachLayer(function(layer) {
+        layer_firms_2.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['name'] !== null?String('<div style="color: #36947c; font-size: 12pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_firms_1'});
+            layer.bindTooltip((layer.feature.properties['name'] !== null?String('<div style="color: #36947c; font-size: 12pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_firms_2'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -149,21 +164,21 @@
               i++;
         });
         map.addControl(new L.Control.Search({
-            layer: layer_firms_1,
+            layer: layer_firms_2,
             initial: false,
             hideMarkerOnCollapse: true,
             propertyName: 'name'}));
         document.getElementsByClassName('search-button')[0].className +=
          ' fa fa-binoculars';
-        resetLabels([layer_firms_1]);
+        resetLabels([layer_firms_2]);
         map.on("zoomend", function(){
-            resetLabels([layer_firms_1]);
+            resetLabels([layer_firms_2]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_firms_1]);
+            resetLabels([layer_firms_2]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_firms_1]);
+            resetLabels([layer_firms_2]);
         });
         </script>
     </body>
