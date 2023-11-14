@@ -8,6 +8,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
         <style>
         #map {
@@ -30,7 +31,8 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
-        <script src="data/firms_2.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/firms_1.js"></script>
         <script>
         var highlightLayer;
         function highlightFeature(e) {
@@ -50,13 +52,16 @@
         }
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[-1.3385045695985658,36.82653477765119],[-1.290121024165046,36.91641358227973]]);
+        })
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
         }
         map.createPane('pane_OSMStandard_0');
         map.getPane('pane_OSMStandard_0').style.zIndex = 400;
@@ -71,19 +76,7 @@
         });
         layer_OSMStandard_0;
         map.addLayer(layer_OSMStandard_0);
-        map.createPane('pane_GoogleHybrid_1');
-        map.getPane('pane_GoogleHybrid_1').style.zIndex = 401;
-        var layer_GoogleHybrid_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-            pane: 'pane_GoogleHybrid_1',
-            opacity: 1.0,
-            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
-            minZoom: 1,
-            maxZoom: 28,
-            minNativeZoom: 0,
-            maxNativeZoom: 20
-        });
-        layer_GoogleHybrid_1;
-        function pop_firms_2(feature, layer) {
+        function pop_firms_1(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (i in e.target._eventParents) {
@@ -113,11 +106,11 @@
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_firms_2_0(feature) {
+        function style_firms_1_0(feature) {
             switch(String(feature.properties['RA'])) {
                 case 'Ivy':
                     return {
-                pane: 'pane_firms_2',
+                pane: 'pane_firms_1',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -133,7 +126,7 @@
                     break;
                 case 'Kevoh':
                     return {
-                pane: 'pane_firms_2',
+                pane: 'pane_firms_1',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -149,26 +142,26 @@
                     break;
             }
         }
-        map.createPane('pane_firms_2');
-        map.getPane('pane_firms_2').style.zIndex = 402;
-        map.getPane('pane_firms_2').style['mix-blend-mode'] = 'normal';
-        var layer_firms_2 = new L.geoJson(json_firms_2, {
+        map.createPane('pane_firms_1');
+        map.getPane('pane_firms_1').style.zIndex = 401;
+        map.getPane('pane_firms_1').style['mix-blend-mode'] = 'normal';
+        var layer_firms_1 = new L.geoJson(json_firms_1, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_firms_2',
-            layerName: 'layer_firms_2',
-            pane: 'pane_firms_2',
-            onEachFeature: pop_firms_2,
+            dataVar: 'json_firms_1',
+            layerName: 'layer_firms_1',
+            pane: 'pane_firms_1',
+            onEachFeature: pop_firms_1,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_firms_2_0(feature));
+                return L.circleMarker(latlng, style_firms_1_0(feature));
             },
         });
-        bounds_group.addLayer(layer_firms_2);
-        map.addLayer(layer_firms_2);
+        bounds_group.addLayer(layer_firms_1);
+        map.addLayer(layer_firms_1);
         var osmGeocoder = new L.Control.Geocoder({
             collapsed: true,
             position: 'topleft',
@@ -180,30 +173,37 @@
         document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
         .title += 'Search for a place';
         var baseMaps = {};
-        L.control.layers(baseMaps,{'firms<br /><table><tr><td style="text-align: center;"><img src="legend/firms_2_Ivy0.png" /></td><td>Ivy</td></tr><tr><td style="text-align: center;"><img src="legend/firms_2_Kevoh1.png" /></td><td>Kevoh</td></tr></table>': layer_firms_2,"Google Hybrid": layer_GoogleHybrid_1,"OSM Standard": layer_OSMStandard_0,},{collapsed:false}).addTo(map);
+        L.control.layers(baseMaps,{'firms<br /><table><tr><td style="text-align: center;"><img src="legend/firms_1_Ivy0.png" /></td><td>Ivy</td></tr><tr><td style="text-align: center;"><img src="legend/firms_1_Kevoh1.png" /></td><td>Kevoh</td></tr></table>': layer_firms_1,"OSM Standard": layer_OSMStandard_0,},{collapsed:false}).addTo(map);
         setBounds();
         var i = 0;
-        layer_firms_2.eachLayer(function(layer) {
+        layer_firms_1.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((exp_label_firms_2_eval_expression(context) !== null?String('<div style="color: #ef020e; font-size: 8pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + exp_label_firms_2_eval_expression(context)) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_firms_2'});
+            layer.bindTooltip((layer.feature.properties['name'] !== null?String('<div style="color: #ef020e; font-size: 8pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_firms_1'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        resetLabels([layer_firms_2]);
+        map.addControl(new L.Control.Search({
+            layer: layer_firms_1,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'name'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        resetLabels([layer_firms_1]);
         map.on("zoomend", function(){
-            resetLabels([layer_firms_2]);
+            resetLabels([layer_firms_1]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_firms_2]);
+            resetLabels([layer_firms_1]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_firms_2]);
+            resetLabels([layer_firms_1]);
         });
         </script>
     </body>
